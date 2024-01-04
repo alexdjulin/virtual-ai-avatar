@@ -1,5 +1,7 @@
 import helpers
+import keyboard
 from cache import Cache
+import time
 
 INTERLOCUTOR = 'Bob'
 EMBEDDING_MODEL = "text-embedding-ada-002"
@@ -18,6 +20,10 @@ class AiAvatar:
         self.embeddings = {}
         self.embedding_cache = Cache()
         self.load_story()
+        self.new_message = ''
+        self.prompt_tokens = 0
+        self.completion_tokens = 0
+        self.recording = False
 
     def __repr__(self):
         '''Prints questions, answers and blacklist'''
@@ -116,37 +122,60 @@ class AiAvatar:
 
         print('Done asking questions')
 
+    def on_space_pressed(self, e) -> str:
+        '''
+        When space is pressed, record voice, transcribe it to text and send it to chatGPT
+        '''
+        if e.event_type == keyboard.KEY_DOWN and self.recording is False:
+            self.recording = True
+            new_message = helpers.record_voice()
+
+            if new_message:
+                self.messages.append({"role": "user", "content": new_message})
+
+                # generate gpt answer and add it to messages
+                answer, tokens = helpers.ask_chat_gpt(messages=self.messages)
+                self.prompt_tokens += tokens[0]
+                self.completion_tokens += tokens[1]
+
+                print(f'chatGPT: {answer}')
+                self.messages.append({"role": "assistant", "content": answer})
+
+                # convert answer to numpy array
+                answer_array = helpers.generate_tts(text=answer, play=True)
+
+                print('Alex: ')
+                self.recording = False
+
+
 
     def chat_with_avatar(self) -> None:
         '''Chat with the avatar'''
 
         print('# Chat Begin #')
         # generate prompt including list of given answers and blacklist
-        messages = [
+        self.messages = [
             {
                 'role': 'system',
                 'content': f"""
                 You are having a friendly conversatoin with your interlocutor.
                 You both want to know more about each other.
                 [Directives:
-                - Here are some information about you that you can use to answer your interlocutor's questions: {list(self.story_dict.values())}.
+                - Here are some information about you that you can use to answer your interlocutor's questions: {self.story_dict.values()}.
                 - Be friendly, keep the conversation going by answering as best as you can.
                 - If you don't know an answer, just make one up that fits your back story.]
                 """
             }]
 
-        while True:
-            try:
-                prompt = input('Alex: ')
-                if prompt.lower() in {'quit', 'exit'}:
-                    # exit program
-                    break
-                messages.append({"role": "user", "content": prompt})
-                answer = helpers.ask_chat_gpt(messages=messages)
-                print(f'chatGPT: {answer}')
-                messages.append({"role": "assistant", "content": answer})
+        try:
+            print('Alex: ')
+            keyboard.on_press_key("space", self.on_space_pressed)
+            keyboard.wait("esc")  # Wait for 'Esc' key to exit the program
 
-            except Exception as error:
-                print(f"Error getting answer from chatGPT: {error}")
+        except Exception as error:
+            print(f"Error getting answer from chatGPT: {error}")
 
         print('# CHAT END #')
+
+        token_price = round(self.prompt_tokens * 0.0000010 + self.completion_tokens * 0.0000020, 3)
+        print(f'TOKENS: Prompt {self.prompt_tokens} | Completion {self.completion_tokens} | Price ${token_price}')
