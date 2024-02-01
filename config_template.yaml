@@ -1,0 +1,45 @@
+##################################################################################
+### TODO: rename this file to config.yaml and fill in the missing values below ###
+##################################################################################
+
+# OPENAI SETTINGS
+## We use OpenAI gpt model to generate an answer from a prompt
+openai_api_key:   # your OpenAI API key
+openai_model: gpt-3.5-turbo  # the Openai model to use
+
+# ELEVENLABS SETTINGS
+## We use Elevenlabs API to generate voice speech from a text answer and clone the user's voice
+elabs_api_key:   # your Elevenlabs API key
+elabs_model: eleven_multilingual_v2  # the Elevenlabs model to use
+elabs_voice_id: pNInz6obpgDQGcFmaJgB  # Adam voice id
+# Voice generation settings
+elabs_stability: 0.75
+elabs_similarity_boost: 0.5
+elabs_style: 0.0
+elabs_use_speaker_boost: true
+
+# SPEECH RECOGNITION SETTINGS
+## We use Google Speech Recognition API to recognize the user's speech
+speech_timeout: 5  # how many seconds to wait for the user to speak before timing out
+
+# USER SETTINGS
+## How the user should interact with the avatar
+user_name: Me  # the name of the user as written to Terminal and chat history
+use_keyboard: true  # hold and release space bar to speak instead of using voice recognition. Useful in a noisy environments
+language_hotkeys: true   # enable hotkeys to change the input language (e.g. press '1' to switch to English)
+
+# AVATAR SETTINGS
+## Information about your avatar
+avatar_name: Johnathan  # the name of your digital self as written to Terminal and chat history
+avatar_description: Your are Johnathan Alexander Smith, a German adventurous explorer  # a short description of your avatar it will use to present itself
+avatar_story: csv/<avatar_name>_story.csv  # Optional: the path to the story file with questions and answers defined to give your avatar a background story. <avatar_name> will be replaced at runtime with your avatar's name
+
+# LOG SETTINGS
+# We use Python logging module to log debug information to a file
+log_level: DEBUG
+log_file: logs/ai_avatar.log
+log_format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+# CHAT HISTORY SETTINGS
+# We use a csv file to store the chat history. <avatar_name> will be replaced at runtime by your avatar's name
+chat_history: csv/<avatar_name>_chat_history.csv
