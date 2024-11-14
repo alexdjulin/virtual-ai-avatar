@@ -3,9 +3,8 @@ A realistic AI-driven clone of myself, using my face and voice, to chat and inte
 
 ## Use-Case Example
 
-https://github.com/alexdjulin/virtual-ai-avatar/assets/53292656/147f2466-f327-4ad0-8a0d-691da8f03389
+<a href="https://youtu.be/WZQRwoXRtgA" target="_blank"><img width="525" alt="Screenshot 2024-11-14 103109" src="https://github.com/user-attachments/assets/5c43554c-f05e-4c31-9904-676989eb2272">
 
-_Here is a short extract, contact me for the full demo video._
 
 ## Description
 This is the output of my AI avatar chat project, using Google speech recognition, OpenAI chat completion and Elevenlabs voice cloning.
